@@ -21,43 +21,41 @@ const INTERPRETATIONS = {
 };
 
 const LUCKY_COLORS_BY_NUMBER = {
-  1: ['Red', 'Orange'],
-  2: ['White', 'Silver'],
-  3: ['Yellow', 'Gold'],
-  4: ['Blue', 'Grey'],
-  5: ['Green', 'Turquoise'],
-  6: ['Pink', 'Royal Blue'],
-  7: ['Violet', 'Sea Green'],
-  8: ['Navy Blue', 'Black'],
-  9: ['Maroon', 'Crimson'],
-  11: ['Electric Blue', 'Pearl White'],
-  22: ['Steel Blue', 'Emerald'],
-  33: ['Rose', 'Lavender']
+  1: ['Red', 'Orange'], 2: ['White', 'Silver'], 3: ['Yellow', 'Gold'],
+  4: ['Blue', 'Grey'], 5: ['Green', 'Turquoise'], 6: ['Pink', 'Royal Blue'],
+  7: ['Violet', 'Sea Green'], 8: ['Navy Blue', 'Black'], 9: ['Maroon', 'Crimson'],
+  11: ['Electric Blue', 'Pearl White'], 22: ['Steel Blue', 'Emerald'], 33: ['Rose', 'Lavender']
 };
 
 const COMPATIBLE_NUMBERS = {
-  1: [1, 2, 4, 7],
-  2: [2, 4, 6, 8],
-  3: [3, 6, 9],
-  4: [1, 2, 4, 8],
-  5: [1, 5, 6, 7],
-  6: [2, 3, 6, 9],
-  7: [1, 5, 7],
-  8: [2, 4, 8],
-  9: [3, 6, 9],
-  11: [2, 7, 11],
-  22: [4, 8, 22],
-  33: [3, 6, 9, 33]
+  1: [1, 2, 4, 7], 2: [2, 4, 6, 8], 3: [3, 6, 9], 4: [1, 2, 4, 8],
+  5: [1, 5, 6, 7], 6: [2, 3, 6, 9], 7: [1, 5, 7], 8: [2, 4, 8], 9: [3, 6, 9],
+  11: [2, 7, 11], 22: [4, 8, 22], 33: [3, 6, 9, 33]
+};
+
+const LUCKY_DAYS = {
+  1: ['Sunday', 'Monday'], 2: ['Monday', 'Friday'], 3: ['Thursday'],
+  4: ['Sunday', 'Saturday'], 5: ['Wednesday', 'Friday'], 6: ['Friday'],
+  7: ['Monday', 'Thursday'], 8: ['Saturday'], 9: ['Tuesday', 'Sunday'],
+  11: ['Monday', 'Thursday'], 22: ['Saturday', 'Sunday'], 33: ['Friday', 'Sunday']
+};
+
+const LUCKY_DIRECTION = {
+  1: 'East', 2: 'North', 3: 'Northeast', 4: 'South', 5: 'Northwest',
+  6: 'Southeast', 7: 'West', 8: 'Southwest', 9: 'South',
+  11: 'East', 22: 'Southwest', 33: 'Northeast'
 };
 
 function reduceNumber(value) {
   let n = Number(value);
   while (n > 9 && !MASTER_NUMBERS.has(n)) {
-    n = String(n)
-      .split('')
-      .reduce((sum, digit) => sum + Number(digit), 0);
+    n = String(n).split('').reduce((sum, digit) => sum + Number(digit), 0);
   }
   return n;
+}
+
+function sumDigits(text) {
+  return (text.match(/\d/g) || []).reduce((sum, d) => sum + Number(d), 0);
 }
 
 function sumName(name, { vowelsOnly = false, consonantsOnly = false } = {}) {
@@ -71,28 +69,52 @@ function sumName(name, { vowelsOnly = false, consonantsOnly = false } = {}) {
 }
 
 function lifePathFromDate(dateText) {
-  const digits = dateText.replace(/\D/g, '');
-  const total = digits.split('').reduce((sum, d) => sum + Number(d), 0);
-  return reduceNumber(total);
+  return reduceNumber(sumDigits(dateText));
 }
 
-function buildSummary(lifePath) {
-  return INTERPRETATIONS[lifePath] || 'A unique path with evolving lessons.';
+function birthNumberFromDate(dateText) {
+  const day = Number((dateText.split('-')[2] || '0'));
+  return reduceNumber(day);
 }
 
 function getDobInsights(dateText) {
   const luckyNumber = lifePathFromDate(dateText);
+  const birthNumber = birthNumberFromDate(dateText);
+  const year = new Date().getFullYear();
+  const [y, m, d] = dateText.split('-').map(Number);
+  const personalYear = reduceNumber(sumDigits(String(m)) + sumDigits(String(d)) + sumDigits(String(year)));
+  const currentYearNumber = reduceNumber(sumDigits(String(y)) + sumDigits(String(year)));
+  const talentNumber = reduceNumber(sumDigits(dateText) + birthNumber);
+  const nameNumberDob = reduceNumber(sumDigits(dateText) + luckyNumber);
   const compatibleNumbers = COMPATIBLE_NUMBERS[luckyNumber] || [luckyNumber];
-  const incompatibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    .filter((n) => !compatibleNumbers.includes(n) && n !== luckyNumber);
-  const luckyColors = LUCKY_COLORS_BY_NUMBER[luckyNumber] || ['White'];
+  const incompatibleNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((n) => !compatibleNumbers.includes(n));
 
   return {
     luckyNumber,
+    talentNumber,
+    birthNumber,
+    nameNumberDob,
+    personalYear,
+    currentYearNumber,
     compatibleNumbers,
     incompatibleNumbers,
-    luckyColors
+    luckyColors: LUCKY_COLORS_BY_NUMBER[luckyNumber] || ['White'],
+    luckyDays: LUCKY_DAYS[luckyNumber] || ['Sunday'],
+    luckyDirection: LUCKY_DIRECTION[luckyNumber] || 'East'
   };
+}
+
+function getNameInsights(fullName) {
+  const destinyNumber = reduceNumber(sumName(fullName));
+  const heartNumber = reduceNumber(sumName(fullName, { vowelsOnly: true }));
+  const personalityNumber = reduceNumber(sumName(fullName, { consonantsOnly: true }));
+  const habitNumber = reduceNumber(destinyNumber + personalityNumber);
+
+  return { destinyNumber, heartNumber, personalityNumber, habitNumber };
+}
+
+function buildSummary(lifePath) {
+  return INTERPRETATIONS[lifePath] || 'A unique path with evolving lessons.';
 }
 
 document.getElementById('numerology-form').addEventListener('submit', (event) => {
@@ -100,23 +122,39 @@ document.getElementById('numerology-form').addEventListener('submit', (event) =>
 
   const fullName = document.getElementById('fullName').value.trim();
   const birthDate = document.getElementById('birthDate').value;
-
   if (!fullName || !birthDate) return;
 
   const lifePath = lifePathFromDate(birthDate);
-  const expression = reduceNumber(sumName(fullName));
-  const soulUrge = reduceNumber(sumName(fullName, { vowelsOnly: true }));
-  const personality = reduceNumber(sumName(fullName, { consonantsOnly: true }));
+  const nameInsights = getNameInsights(fullName);
   const dobInsights = getDobInsights(birthDate);
+  const expression = nameInsights.destinyNumber;
+  const soulUrge = nameInsights.heartNumber;
+  const personality = nameInsights.personalityNumber;
+  const ultimateNumber = reduceNumber(dobInsights.luckyNumber + nameInsights.destinyNumber);
+  const bep = `${reduceNumber(dobInsights.birthNumber + 36)} / ${reduceNumber(dobInsights.birthNumber + 45)} / ${reduceNumber(dobInsights.birthNumber + 54)} / ${reduceNumber(dobInsights.birthNumber + 63)}`;
 
   document.getElementById('lifePath').textContent = lifePath;
-  document.getElementById('expression').textContent = expression;
-  document.getElementById('soulUrge').textContent = soulUrge;
-  document.getElementById('personality').textContent = personality;
   document.getElementById('luckyNumber').textContent = dobInsights.luckyNumber;
+  document.getElementById('talentNumber').textContent = dobInsights.talentNumber;
+  document.getElementById('birthNumber').textContent = dobInsights.birthNumber;
+  document.getElementById('nameNumberDob').textContent = dobInsights.nameNumberDob;
+  document.getElementById('personalYear').textContent = dobInsights.personalYear;
+  document.getElementById('currentYearNumber').textContent = dobInsights.currentYearNumber;
   document.getElementById('compatibleNumbers').textContent = dobInsights.compatibleNumbers.join(', ');
   document.getElementById('incompatibleNumbers').textContent = dobInsights.incompatibleNumbers.join(', ');
   document.getElementById('luckyColors').textContent = dobInsights.luckyColors.join(', ');
+  document.getElementById('luckyDays').textContent = dobInsights.luckyDays.join(', ');
+  document.getElementById('luckyDirection').textContent = dobInsights.luckyDirection;
+
+  document.getElementById('destinyNumber').textContent = nameInsights.destinyNumber;
+  document.getElementById('heartNumber').textContent = nameInsights.heartNumber;
+  document.getElementById('habitNumber').textContent = nameInsights.habitNumber;
+  document.getElementById('personalityNumber').textContent = nameInsights.personalityNumber;
+  document.getElementById('expression').textContent = expression;
+  document.getElementById('soulUrge').textContent = soulUrge;
+  document.getElementById('personality').textContent = personality;
+  document.getElementById('ultimateNumber').textContent = ultimateNumber;
+  document.getElementById('bep').textContent = bep;
   document.getElementById('summary').textContent = `Life Path ${lifePath}: ${buildSummary(lifePath)}`;
 
   document.getElementById('results').classList.remove('hidden');

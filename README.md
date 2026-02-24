@@ -1,15 +1,13 @@
 # Numerology App
 
-A lightweight front-end numerology app that calculates:
+A lightweight front-end numerology app that calculates from name + date of birth:
 
-- Life Path Number (from birth date)
-- Expression/Destiny Number (from full name)
-- Soul Urge Number (vowels in name)
-- Personality Number (consonants in name)
-- Lucky Number (from DOB)
-- Compatible Numbers (from DOB)
-- Incompatible Numbers (from DOB)
-- Lucky Colors (from DOB)
+- Life Path Number
+- Lucky Number, Talent No., Birth No., Name No. (DOB-based)
+- Personal Year, Current Year No., B.E.P.
+- Compatible/Incompatible Numbers, Lucky Colors, Lucky Days, Lucky Direction
+- Destiny No., Heart No., Habit No., Personality No. (name-based)
+- Ultimate No. (DOB + Name)
 
 ## Run locally
 
