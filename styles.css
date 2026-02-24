@@ -72,3 +72,20 @@ li {
 .hidden {
   display: none;
 }
+
+.frequency-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+}
+
+.frequency-table th,
+.frequency-table td {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.frequency-table thead {
+  background: rgba(255, 255, 255, 0.12);
+}
