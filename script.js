@@ -14,7 +14,7 @@ const INTERPRETATIONS = {
   6: 'Care, responsibility, and service.',
   7: 'Reflection, analysis, and spirituality.',
   8: 'Ambition, achievement, and influence.',
-  9: 'Compassion, wisdom, and completion.',
+  9: 'Agression and Humanitarian.',
   11: 'Intuition and inspired vision (master number).',
   22: 'Master builder energy and grounded manifestation.',
   33: 'Compassionate teaching and healing (master number).'
@@ -22,28 +22,24 @@ const INTERPRETATIONS = {
 
 const LUCKY_COLORS_BY_NUMBER = {
   1: ['Red', 'Orange'], 2: ['White', 'Silver'], 3: ['Yellow', 'Gold'],
-  4: ['Blue', 'Grey'], 5: ['Green', 'Turquoise'], 6: ['Pink', 'Royal Blue'],
-  7: ['Violet', 'Sea Green'], 8: ['Navy Blue', 'Black'], 9: ['Maroon', 'Crimson'],
-  11: ['Electric Blue', 'Pearl White'], 22: ['Steel Blue', 'Emerald'], 33: ['Rose', 'Lavender']
+  4: ['Blue', 'Grey'], 5: ['Green', 'Turquoise'], 6: ['Pink'],
+  7: ['Black&White'], 8: ['Navy Blue', 'Black'], 9: ['Maroon', 'Crimson']
 };
 
 const COMPATIBLE_NUMBERS = {
-  1: [1, 2, 4, 7], 2: [2, 4, 6, 8], 3: [3, 6, 9], 4: [1, 2, 4, 8],
-  5: [1, 5, 6, 7], 6: [2, 3, 6, 9], 7: [1, 5, 7], 8: [2, 4, 8], 9: [3, 6, 9],
-  11: [2, 7, 11], 22: [4, 8, 22], 33: [3, 6, 9, 33]
+  1: [2,3,9], 2: [1,5], 3: [1,2,9], 4: [6,8],
+  5: [1, 6], 6: [4,5,7,8], 7: [6,9], 8: [4,5,6], 9: [1,2,3,7]
 };
 
 const LUCKY_DAYS = {
-  1: ['Sunday', 'Monday'], 2: ['Monday', 'Friday'], 3: ['Thursday'],
-  4: ['Sunday', 'Saturday'], 5: ['Wednesday', 'Friday'], 6: ['Friday'],
-  7: ['Monday', 'Thursday'], 8: ['Saturday'], 9: ['Tuesday', 'Sunday'],
-  11: ['Monday', 'Thursday'], 22: ['Saturday', 'Sunday'], 33: ['Friday', 'Sunday']
+  1: ['Sunday', 'Monday','Tuesday','Thursday'], 2: ['Sunday','Monday', 'Wednesday'], 3: ['Sunday', 'Monday','Tuesday','Thursday'],
+  4: ['Friday', 'Saturday'], 5: ['Wednesday', 'Friday','Sunday'], 6: ['Wednesday', 'Friday','Saturday'],
+  7: ['Wednesday', 'Thursday','Friday'], 8: ['Wednesday', 'Friday','Saturday'], 9: ['Sunday', 'Monday','Tuesday','Thursday']
 };
 
 const LUCKY_DIRECTION = {
-  1: 'East', 2: 'North', 3: 'Northeast', 4: 'South', 5: 'Northwest',
-  6: 'Southeast', 7: 'West', 8: 'Southwest', 9: 'South',
-  11: 'East', 22: 'Southwest', 33: 'Northeast'
+  1: 'East', 2: 'Northwest', 3: 'Northeast', 4: 'Southwest', 5: 'North',
+  6: 'Southeast', 7: 'Northest', 8: 'West', 9: 'South'
 };
 
 function reduceNumber(value) {
