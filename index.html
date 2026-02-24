@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Numerology App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Numerology App</h1>
+    <p class="subtitle">Enter your name and birth date to explore your core numerology numbers.</p>
+
+    <form id="numerology-form" class="card">
+      <label for="fullName">Full name</label>
+      <input id="fullName" name="fullName" type="text" placeholder="e.g. Ada Lovelace" required />
+
+      <label for="birthDate">Birth date</label>
+      <input id="birthDate" name="birthDate" type="date" required />
+
+      <button type="submit">Calculate</button>
+    </form>
+
+    <section id="results" class="card hidden" aria-live="polite">
+      <h2>Your numbers</h2>
+      <ul>
+        <li><strong>Life Path:</strong> <span id="lifePath"></span></li>
+        <li><strong>Expression (Destiny):</strong> <span id="expression"></span></li>
+        <li><strong>Soul Urge:</strong> <span id="soulUrge"></span></li>
+        <li><strong>Personality:</strong> <span id="personality"></span></li>
+      </ul>
+      <p id="summary"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
