@@ -6,6 +6,10 @@ A lightweight front-end numerology app that calculates:
 - Expression/Destiny Number (from full name)
 - Soul Urge Number (vowels in name)
 - Personality Number (consonants in name)
+- Lucky Number (from DOB)
+- Compatible Numbers (from DOB)
+- Incompatible Numbers (from DOB)
+- Lucky Colors (from DOB)
 
 ## Run locally
 

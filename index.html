@@ -9,7 +9,7 @@
 <body>
   <main class="container">
     <h1>Numerology App</h1>
-    <p class="subtitle">Enter your name and birth date to explore your core numerology numbers.</p>
+    <p class="subtitle">Enter your name and birth date to explore numerology insights.</p>
 
     <form id="numerology-form" class="card">
       <label for="fullName">Full name</label>
@@ -22,12 +22,16 @@
     </form>
 
     <section id="results" class="card hidden" aria-live="polite">
-      <h2>Your numbers</h2>
+      <h2>Your Numbers</h2>
       <ul>
         <li><strong>Life Path:</strong> <span id="lifePath"></span></li>
         <li><strong>Expression (Destiny):</strong> <span id="expression"></span></li>
         <li><strong>Soul Urge:</strong> <span id="soulUrge"></span></li>
         <li><strong>Personality:</strong> <span id="personality"></span></li>
+        <li><strong>Lucky Number (DOB):</strong> <span id="luckyNumber"></span></li>
+        <li><strong>Compatible Numbers (DOB):</strong> <span id="compatibleNumbers"></span></li>
+        <li><strong>Incompatible Numbers (DOB):</strong> <span id="incompatibleNumbers"></span></li>
+        <li><strong>Lucky Colors (DOB):</strong> <span id="luckyColors"></span></li>
       </ul>
       <p id="summary"></p>
     </section>
