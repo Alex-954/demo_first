@@ -27,14 +27,14 @@ const LUCKY_COLORS_BY_NUMBER = {
 };
 
 const COMPATIBLE_NUMBERS = {
-  1: [2,3,9], 2: [1,5], 3: [1,2,9], 4: [6,8],
-  5: [1, 6], 6: [4,5,7,8], 7: [6,9], 8: [4,5,6], 9: [1,2,3,7]
+  1: [2, 3, 9], 2: [1, 5], 3: [1, 2, 9], 4: [6, 8],
+  5: [1, 6], 6: [4, 5, 7, 8], 7: [6, 9], 8: [4, 5, 6], 9: [1, 2, 3, 7]
 };
 
 const LUCKY_DAYS = {
-  1: ['Sunday', 'Monday','Tuesday','Thursday'], 2: ['Sunday','Monday', 'Wednesday'], 3: ['Sunday', 'Monday','Tuesday','Thursday'],
-  4: ['Friday', 'Saturday'], 5: ['Wednesday', 'Friday','Sunday'], 6: ['Wednesday', 'Friday','Saturday'],
-  7: ['Wednesday', 'Thursday','Friday'], 8: ['Wednesday', 'Friday','Saturday'], 9: ['Sunday', 'Monday','Tuesday','Thursday']
+  1: ['Sunday', 'Monday', 'Tuesday', 'Thursday'], 2: ['Sunday', 'Monday', 'Wednesday'], 3: ['Sunday', 'Monday', 'Tuesday', 'Thursday'],
+  4: ['Friday', 'Saturday'], 5: ['Wednesday', 'Friday', 'Sunday'], 6: ['Wednesday', 'Friday', 'Saturday'],
+  7: ['Wednesday', 'Thursday', 'Friday'], 8: ['Wednesday', 'Friday', 'Saturday'], 9: ['Sunday', 'Monday', 'Tuesday', 'Thursday']
 };
 
 const LUCKY_DIRECTION = {
@@ -43,7 +43,7 @@ const LUCKY_DIRECTION = {
 };
 
 function reduceNumber(value) {
-  let n = Number(value);
+  let n = Math.abs(Number(value));
   while (n > 9 && !MASTER_NUMBERS.has(n)) {
     n = String(n).split('').reduce((sum, digit) => sum + Number(digit), 0);
   }
@@ -73,9 +73,73 @@ function birthNumberFromDate(dateText) {
   return reduceNumber(day);
 }
 
+function kuaNumberFromDate(dateText) {
+  const [year] = dateText.split('-').map(Number);
+  const reducedYear = reduceNumber(sumDigits(String(year)));
+  let kua = 11 - reducedYear;
+  while (kua <= 0) kua += 9;
+  return reduceNumber(kua);
+}
+
+function firstAlphabetFromName(fullName) {
+  const firstLetter = (fullName.toUpperCase().match(/[A-Z]/) || [null])[0];
+  return firstLetter ? `${firstLetter} (${LETTER_VALUES[firstLetter]})` : '-';
+}
+
+function firstVowelFromName(fullName) {
+  const firstVowel = (fullName.toUpperCase().match(/[AEIOU]/) || [null])[0];
+  return firstVowel ? `${firstVowel} (${LETTER_VALUES[firstVowel]})` : '-';
+}
+
+function getPinnaclesFromDate(dateText) {
+  const [year, month, day] = dateText.split('-').map(Number);
+  const m = reduceNumber(month);
+  const d = reduceNumber(day);
+  const y = reduceNumber(year);
+
+  const p1 = reduceNumber(m + d);
+  const p2 = reduceNumber(d + y);
+  const p3 = reduceNumber(p1 + p2);
+  const p4 = reduceNumber(m + y);
+
+  return [p1, p2, p3, p4];
+}
+
+function getChallengesFromDate(dateText) {
+  const [year, month, day] = dateText.split('-').map(Number);
+  const m = reduceNumber(month);
+  const d = reduceNumber(day);
+  const y = reduceNumber(year);
+
+  const c1 = reduceNumber(Math.abs(d - m));
+  const c2 = reduceNumber(Math.abs(d - y));
+  const c3 = reduceNumber(Math.abs(c1 - c2));
+  const c4 = reduceNumber(Math.abs(m - y));
+
+  return [c1, c2, c3, c4];
+}
+
+function getPlanesFromName(fullName) {
+  const letters = fullName.toUpperCase().match(/[A-Z]/g) || [];
+  const countsByValue = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+
+  letters.forEach((letter) => {
+    const value = LETTER_VALUES[letter];
+    countsByValue[value] += 1;
+  });
+
+  const plane1 = countsByValue[1] + countsByValue[8]; // mental
+  const plane2 = countsByValue[4] + countsByValue[5]; // physical
+  const plane3 = countsByValue[2] + countsByValue[3] + countsByValue[6]; // emotional
+  const plane4 = countsByValue[7] + countsByValue[9]; // intuitive
+
+  return [plane1, plane2, plane3, plane4];
+}
+
 function getDobInsights(dateText) {
   const luckyNumber = lifePathFromDate(dateText);
   const birthNumber = birthNumberFromDate(dateText);
+  const kuaNumber = kuaNumberFromDate(dateText);
   const year = new Date().getFullYear();
   const [y, m, d] = dateText.split('-').map(Number);
   const personalYear = reduceNumber(sumDigits(String(m)) + sumDigits(String(d)) + sumDigits(String(year)));
@@ -87,6 +151,7 @@ function getDobInsights(dateText) {
 
   return {
     luckyNumber,
+    kuaNumber,
     talentNumber,
     birthNumber,
     nameNumberDob,
@@ -106,7 +171,14 @@ function getNameInsights(fullName) {
   const personalityNumber = reduceNumber(sumName(fullName, { consonantsOnly: true }));
   const habitNumber = reduceNumber(destinyNumber + personalityNumber);
 
-  return { destinyNumber, heartNumber, personalityNumber, habitNumber };
+  return {
+    destinyNumber,
+    heartNumber,
+    personalityNumber,
+    habitNumber,
+    firstAlphabet: firstAlphabetFromName(fullName),
+    firstVowel: firstVowelFromName(fullName)
+  };
 }
 
 function buildSummary(lifePath) {
@@ -127,10 +199,15 @@ document.getElementById('numerology-form').addEventListener('submit', (event) =>
   const soulUrge = nameInsights.heartNumber;
   const personality = nameInsights.personalityNumber;
   const ultimateNumber = reduceNumber(dobInsights.luckyNumber + nameInsights.destinyNumber);
-  const bep = `${reduceNumber(dobInsights.birthNumber + 36)} / ${reduceNumber(dobInsights.birthNumber + 45)} / ${reduceNumber(dobInsights.birthNumber + 54)} / ${reduceNumber(dobInsights.birthNumber + 63)}`;
+  const bef = getPinnaclesFromDate(birthDate).join(' / ');
+  const pinnacles = getPinnaclesFromDate(birthDate);
+  const challenges = getChallengesFromDate(birthDate);
+  const planes = getPlanesFromName(fullName);
+  const specialFrequency = reduceNumber(dobInsights.luckyNumber + dobInsights.personalYear + nameInsights.destinyNumber + dobInsights.kuaNumber);
 
   document.getElementById('lifePath').textContent = lifePath;
   document.getElementById('luckyNumber').textContent = dobInsights.luckyNumber;
+  document.getElementById('kuaNumber').textContent = dobInsights.kuaNumber;
   document.getElementById('talentNumber').textContent = dobInsights.talentNumber;
   document.getElementById('birthNumber').textContent = dobInsights.birthNumber;
   document.getElementById('nameNumberDob').textContent = dobInsights.nameNumberDob;
@@ -146,12 +223,30 @@ document.getElementById('numerology-form').addEventListener('submit', (event) =>
   document.getElementById('heartNumber').textContent = nameInsights.heartNumber;
   document.getElementById('habitNumber').textContent = nameInsights.habitNumber;
   document.getElementById('personalityNumber').textContent = nameInsights.personalityNumber;
+  document.getElementById('firstAlphabet').textContent = nameInsights.firstAlphabet;
+  document.getElementById('firstVowel').textContent = nameInsights.firstVowel;
   document.getElementById('expression').textContent = expression;
   document.getElementById('soulUrge').textContent = soulUrge;
   document.getElementById('personality').textContent = personality;
   document.getElementById('ultimateNumber').textContent = ultimateNumber;
-  document.getElementById('bep').textContent = bep;
-  document.getElementById('summary').textContent = `Life Path ${lifePath}: ${buildSummary(lifePath)}`;
+  document.getElementById('bef').textContent = bef;
+  document.getElementById('specialFrequency').textContent = specialFrequency;
 
+  document.getElementById('pinnacle1').textContent = pinnacles[0];
+  document.getElementById('pinnacle2').textContent = pinnacles[1];
+  document.getElementById('pinnacle3').textContent = pinnacles[2];
+  document.getElementById('pinnacle4').textContent = pinnacles[3];
+
+  document.getElementById('challenge1').textContent = challenges[0];
+  document.getElementById('challenge2').textContent = challenges[1];
+  document.getElementById('challenge3').textContent = challenges[2];
+  document.getElementById('challenge4').textContent = challenges[3];
+
+  document.getElementById('plane1').textContent = planes[0];
+  document.getElementById('plane2').textContent = planes[1];
+  document.getElementById('plane3').textContent = planes[2];
+  document.getElementById('plane4').textContent = planes[3];
+
+  document.getElementById('summary').textContent = `Life Path ${lifePath}: ${buildSummary(lifePath)}`;
   document.getElementById('results').classList.remove('hidden');
 });
